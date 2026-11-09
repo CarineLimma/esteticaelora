@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#fffaf9">
+    <meta name="description" content="{{ business.description }}">
+    <meta name="robots" content="index, follow">
+    <title>Studio Élora | Beleza e Autocuidado</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="header">
+    <a href="#inicio" class="logo">Studio Élora</a>
+</header>
+<main>
+    <section class="hero" id="inicio">
+        <div class="hero-content">
+            <img class="hero-logo" src="{{ url_for('static', filename='css/img/logo-estetica.png') }}" alt="Studio Élora">
+            <span class="hero-subtitle">BELEZA • CUIDADO • AUTOESTIMA</span>
+            <h1>{{ business.headline or 'Sua beleza merece um momento especial.' }}</h1>
+            <p>{{ business.description }}</p>
+        </div>
+        <img class="hero-image" src="{{ url_for('static', filename='css/img/mulher-sem-fundo.png') }}" alt="Studio Élora">
+    </section>
+
+    <section class="about" id="sobre">
+        <div class="about-container">
+            <div class="about-image">
+                <img src="{{ url_for('static', filename='css/img/studio.jpg') }}" alt="Ambiente do Studio Élora" loading="lazy">
+            </div>
+            <div class="about-content">
+                <span>UM ESPAÇO FEITO PARA VOCÊ</span>
+                <h2>Nosso espaço</h2>
+                <p>{{ business.about or business.description }}</p>
+                <p>Um ambiente preparado com carinho para proporcionar momentos de beleza, cuidado e bem-estar.</p>
+                <a href="#agendamento" class="btn">Agende sua visita</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="services" id="servicos">
+        <div class="section-title">
+            <span>CUIDADO EM CADA DETALHE</span>
+            <h2>Nossos serviços</h2>
+            <p>Descubra nossos procedimentos e escolha seu momento de autocuidado.</p>
+        </div>
+        <details class="services-dropdown">
+            <summary>
+                <span>Conheça todos os nossos serviços</span>
+                <span class="dropdown-arrow" aria-hidden="true">⌄</span>
+            </summary>
+            <div class="services-grid">
+                <article class="service-card">
+                    <div class="service-image">
+                        <img src="{{ url_for('static', filename='css/img/limpeza-pele.png') }}" alt="Limpeza de pele" loading="lazy">
+                    </div>
+                    <div class="service-card-content">
+                        <p>Renovação, purificação e cuidado para uma pele mais saudável e iluminada.</p>
+                        <div class="service-info">
+                            <strong>R$ 120,00</strong>
+                            <span>60 min</span>
+                        </div>
+                        <button type="button" class="btn service-select" data-service="Limpeza de Pele" data-price="120" data-duration="60">Agendar procedimento</button>
+                    </div>
+                </article>
+                <article class="service-card">
+                    <div class="service-image">
+                        <img src="{{ url_for('static', filename='css/img/sobrancelha.jpg') }}" alt="Design de sobrancelhas" loading="lazy">
+                    </div>
+                    <div class="service-card-content">
+                        <p>Modelagem personalizada para valorizar a harmonia do seu rosto.</p>
+                        <div class="service-info">
+                            <strong>R$ 45,00</strong>
+                            <span>30 min</span>
+                        </div>
+                        <button type="button" class="btn service-select" data-service="Design de Sobrancelhas" data-price="45" data-duration="30">Agendar procedimento</button>
+                    </div>
+                </article>
+                <article class="service-card">
+                    <div class="service-image">
+                        <img src="{{ url_for('static', filename='css/img/lash.jpg') }}" alt="Lash lifting" loading="lazy">
+                    </div>
+                    <div class="service-card-content">
+                        <p>Curvatura e destaque natural para os cílios, sem necessidade de extensão.</p>
+                        <div class="service-info">
+                            <strong>R$ 120,00</strong>
+                            <span>60 min</span>
+                        </div>
+                        <button type="button" class="btn service-select" data-service="Lash Lifting" data-price="120" data-duration="60">Agendar procedimento</button>
+                    </div>
+                </article>
+                <article class="service-card">
+                    <div class="service-image">
+                        <img src="{{ url_for('static', filename='css/img/extensao.jpg') }}" alt="Extensão de cílios" loading="lazy">
+                    </div>
+                    <div class="service-card-content">
+                        <p>Fios aplicados um a um para cílios mais longos, volumosos e definidos, com acabamento natural.</p>
+                        <div class="service-info">
+                            <strong>R$ 150,00</strong>
+                            <span>90 min</span>
+                        </div>
+                        <button type="button" class="btn service-select" data-service="Extensão de Cílios" data-price="150" data-duration="90">Agendar procedimento</button>
+                    </div>
+                </article>
+            </div>
+        </details>
+    </section>
+
+    <section class="booking" id="agendamento">
+        <div class="section-title">
+            <span>RESERVE SEU MOMENTO</span>
+            <h2>Agende seu horário</h2>
+            <p>Escolha seu procedimento, selecione uma data e encontre o melhor horário para você.</p>
+        </div>
+        <div class="booking-container" id="booking-container">
+            <div class="booking-progress">
+                <div class="progress-step active"><span>1</span><small>Procedimento</small></div>
+                <div class="progress-line"></div>
+                <div class="progress-step"><span>2</span><small>Data e horário</small></div>
+                <div class="progress-line"></div>
+                <div class="progress-step"><span>3</span><small>Seus dados</small></div>
+                <div class="progress-line"></div>
+                <div class="progress-step"><span>4</span><small>Confirmação</small></div>
+            </div>
+
+            <div class="booking-step" id="step-procedure">
+                <h3>Escolha seu procedimento</h3>
+                <p>Selecione o serviço que deseja realizar.</p>
+                <div class="booking-service-list">
+                    {% for service in services %}
+                    <button type="button" class="booking-service" data-service="{{ service.name }}" data-price="{{ service.price }}" data-duration="{{ service.duration_minutes }}">
+                        <span><strong>{{ service.name }}</strong><small>{{ service.duration_minutes }} minutos</small></span>
+                        <strong>R$ {{ "%.2f"|format(service.price)|replace(".", ",") }}</strong>
+                    </button>
+                    {% else %}
+                    <p>Nenhum procedimento disponível para agendamento.</p>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn booking-next" data-next="date">Continuar</button>
+            </div>
+
+            <div class="booking-step" id="step-date" hidden>
+                <h3>Escolha a data e o horário</h3>
+                <p>Selecione o dia desejado para seu atendimento.</p>
+                <div class="calendar-container">
+                    <div class="calendar-header">
+                        <button type="button" id="prev-month" aria-label="Mês anterior">&#10094;</button>
+                        <h4 id="calendar-month"></h4>
+                        <button type="button" id="next-month" aria-label="Próximo mês">&#10095;</button>
+                    </div>
+                    <div class="calendar-weekdays">
+                        <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+                    </div>
+                    <div class="calendar-days" id="calendar-days"></div>
+                </div>
+                <div class="available-times">
+                    <h4>Horários disponíveis</h4>
+                    <p>Selecione uma data para consultar os horários.</p>
+                    <div class="time-slots" id="time-slots"></div>
+                </div>
+                <div class="booking-actions">
+                    <button type="button" class="btn btn-secondary booking-back" data-back="procedure">Voltar</button>
+                    <button type="button" class="btn booking-next" data-next="customer">Continuar</button>
+                </div>
+            </div>
+
+            <div class="booking-step" id="step-customer" hidden>
+                <h3>Seus dados</h3>
+                <p>Informe seus dados para solicitar o agendamento.</p>
+                <form id="booking-form">
+                    <div class="form-group">
+                        <label for="customer-name">Nome completo</label>
+                        <input type="text" id="customer-name" name="name" placeholder="Digite seu nome" autocomplete="name" maxlength="100" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer-phone">Telefone / WhatsApp</label>
+                        <input type="tel" id="customer-phone" name="phone" placeholder="(00) 00000-0000" autocomplete="tel" maxlength="15" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customer-notes">Observações (opcional)</label>
+                        <textarea id="customer-notes" name="notes" rows="4" maxlength="500" placeholder="Alguma informação importante?"></textarea>
+                    </div>
+                    <div class="booking-actions">
+                        <button type="button" class="btn btn-secondary booking-back" data-back="date">Voltar</button>
+                        <button type="submit" class="btn">Revisar agendamento</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="booking-step" id="step-confirmation" hidden>
+                <h3>Revise seu agendamento</h3>
+                <p>Confira as informações antes de continuar.</p>
+                <div class="booking-summary">
+                    <div class="summary-item"><span>Procedimento</span><strong id="summary-service">-</strong></div>
+                    <div class="summary-item"><span>Preço</span><strong id="summary-price">-</strong></div>
+                    <div class="summary-item"><span>Duração</span><strong id="summary-duration">-</strong></div>
+                    <div class="summary-item"><span>Data</span><strong id="summary-date">-</strong></div>
+                    <div class="summary-item"><span>Horário</span><strong id="summary-time">-</strong></div>
+                    <div class="summary-item"><span>Cliente</span><strong id="summary-name">-</strong></div>
+                    <div class="summary-item"><span>Telefone</span><strong id="summary-phone">-</strong></div>
+                </div>
+                <div class="booking-notice">
+                    <p>Seu horário ainda não está confirmado. Ao continuar, você será direcionada ao WhatsApp para enviar sua solicitação à profissional.</p>
+                </div>
+                <div class="booking-actions">
+                    <button type="button" class="btn btn-secondary booking-back" data-back="customer">Voltar</button>
+                    <button type="button" class="btn" id="confirm-booking">Enviar solicitação pelo WhatsApp</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="location" id="localizacao">
+        <div class="section-title">
+            <span>VENHA NOS VISITAR</span>
+            <h2>Onde estamos</h2>
+            <p>Será um prazer receber você.</p>
+        </div>
+        <div class="details-grid">
+            <div class="location-map">
+                <h3>Localização</h3>
+                <iframe src="https://www.google.com/maps?q=Centro,Joinville,SC,Brasil&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa do Centro de Joinville" allowfullscreen></iframe>
+                <p>Centro, Joinville - SC</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=Centro%2C+Joinville%2C+SC" target="_blank" rel="noopener noreferrer">Como chegar</a>
+            </div>
+            <div class="opening-hours">
+                <h3>Horários de atendimento</h3>
+                <ul>
+                    {% for day in schedule %}
+                    <li>
+                        <span>{{ day.day_name }}</span>
+                        <span>{% if day.enabled %}{{ day.start_time }} às {{ day.end_time }}{% else %}Fechado{% endif %}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    
+<section class="social" aria-label="Redes sociais">
+    <a href="https://www.instagram.com/mw3digital/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="social-link">
+        <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="5"/>
+            <circle cx="12" cy="12" r="4"/>
+            <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/>
+        </svg>
+        <span>Instagram</span>
+    </a>
+
+    {% if business.whatsapp %}
+    <a href="https://wa.me/{{ business.whatsapp|replace(' ', '')|replace('(', '')|replace(')', '')|replace('-', '')|replace('+', '') }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="social-link">
+        <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5Z"/>
+            <path d="M9 9a5 5 0 0 0 6 6"/>
+        </svg>
+        <span>WhatsApp</span>
+    </a>
+    {% endif %}
+</section>
+
+</main>
+
+<footer class="system-footer">
+    <p>© <span id="current-year">2026</span> {{ business.name or 'Studio Élora' }}. Todos os direitos reservados.</p>
+    <span class="mw3-credit">Sistema desenvolvido por <a href="https://mw3digital.netlify.app" target="_blank" rel="noopener noreferrer">MW3 Digital</a></span>
+</footer>
+
+<script>
+    document.getElementById('current-year').textContent = new Date().getFullYear();
+    window.ELORA = {
+        whatsapp: {{ (business.whatsapp or '')|tojson }},
+        interval: {{ (business.interval_minutes or 30)|tojson }},
+        schedule: {{ schedule|tojson }}
+    };
+</script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

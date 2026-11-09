@@ -1,0 +1,68 @@
+{% extends "admin/base.html" %}
+{% set active = 'agenda' %}
+{% block title %}Agenda{% endblock %}
+
+{% block content %}
+<section class="admin-section active" id="section-agenda">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">ATENDIMENTOS</span>
+            <h1>Minha agenda</h1>
+            <p>Acompanhe as solicitações de agendamento.</p>
+        </div>
+    </div>
+
+    <div class="panel-card">
+        <div class="panel-heading">
+            <div>
+                <h2>Agendamentos recebidos</h2>
+                <p>Consulte os horários solicitados pelas clientes.</p>
+            </div>
+            <input type="date" id="filterAppointmentDate" aria-label="Filtrar por data">
+        </div>
+
+        <div class="table-responsive">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Serviço</th>
+                        <th>Data</th>
+                        <th>Horário</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="appointmentsTable">
+                    {% for a in appointments %}
+                    <tr data-date="{{ a.appointment_date }}">
+                        <td>
+                            <strong>{{ a.customer_name }}</strong><br>
+                            <small>{{ a.customer_phone }}</small>
+                        </td>
+                        <td>{{ a.service_name or 'Serviço removido' }}</td>
+                        <td>{{ a.appointment_date[8:10] }}/{{ a.appointment_date[5:7] }}/{{ a.appointment_date[0:4] }}</td>
+                        <td>{{ a.appointment_time }}</td>
+                        <td><span class="status-badge {{ a.status }}">{{ status_labels.get(a.status, a.status) }}</span></td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin_appointment_status', appointment_id=a.id) }}" class="status-form">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <select name="status" aria-label="Alterar status">
+                                    {% for value, label in status_labels.items() %}
+                                    <option value="{{ value }}" {% if a.status == value %}selected{% endif %}>{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button type="submit" class="text-button">Salvar</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr id="noAppointmentsRow" {% if appointments %}hidden{% endif %}>
+                        <td colspan="6" class="table-empty">Nenhum agendamento encontrado.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

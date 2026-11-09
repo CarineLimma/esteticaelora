@@ -1,0 +1,46 @@
+{% extends "admin/base.html" %}
+{% set active = 'aparencia' %}
+{% block title %}Fotos e aparência{% endblock %}
+
+{% block content %}
+<section class="admin-section active" id="section-aparencia">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">IDENTIDADE VISUAL</span>
+            <h1>Fotos e aparência</h1>
+            <p>Personalize as imagens que aparecem no seu site.</p>
+        </div>
+    </div>
+
+    <form method="POST" action="{{ url_for('admin_aparencia') }}" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        {% set cover = business.cover_image or '' %}
+        {% set profile_image = business.profile_image or '' %}
+
+        <div class="panel-card">
+            <h2>Imagem principal do site</h2>
+            <p>Escolha a foto de destaque da página inicial.</p>
+            <div class="upload-area">
+                <div class="image-preview" id="coverPreview"{% if cover.startswith('/static/uploads/') %} style="background-image: url('{{ cover }}'); background-size: cover; background-position: center;"{% endif %}>
+                    {% if not cover %}<span>Imagem de capa</span>{% endif %}
+                </div>
+                <input type="file" id="coverImage" name="cover_image" accept="image/jpeg,image/png,image/webp" aria-label="Imagem principal do site">
+                <small class="upload-hint">JPG, PNG ou WEBP de até 5 MB.</small>
+            </div>
+        </div>
+
+        <div class="panel-card">
+            <h2>Foto do perfil</h2>
+            <p>Adicione uma foto para apresentar sua marca.</p>
+            <div class="upload-area">
+                <div class="profile-preview" id="profilePreview"{% if profile_image.startswith('/static/uploads/') %} style="background-image: url('{{ profile_image }}'); background-size: cover; background-position: center;"{% endif %}>{% if not profile_image %}{{ business.name[:1]|upper }}{% endif %}</div>
+                <input type="file" id="profileImage" name="profile_image" accept="image/jpeg,image/png,image/webp" aria-label="Foto do perfil">
+                <small class="upload-hint">JPG, PNG ou WEBP de até 5 MB.</small>
+            </div>
+        </div>
+
+        <button type="submit" class="primary-button">Salvar alterações</button>
+    </form>
+</section>
+{% endblock %}

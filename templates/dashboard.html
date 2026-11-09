@@ -1,0 +1,100 @@
+{% extends "admin/base.html" %}
+{% set active = 'dashboard' %}
+{% block title %}Visão geral{% endblock %}
+
+{% block content %}
+<section class="admin-section active" id="section-dashboard">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">SEJA BEM-VINDA</span>
+            <h1>Olá, {{ owner.nickname or owner.name.split()[0] }}! ✨</h1>
+            <p>Acompanhe e gerencie seu espaço por aqui.</p>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <article class="stat-card">
+            <span>Agendamentos hoje</span>
+            <strong>{{ stats.today|default(0) }}</strong>
+            <small>Compromissos do dia</small>
+        </article>
+        <article class="stat-card">
+            <span>Agendamentos pendentes</span>
+            <strong>{{ stats.pending|default(0) }}</strong>
+            <small>Aguardando confirmação</small>
+        </article>
+        <article class="stat-card">
+            <span>Serviços cadastrados</span>
+            <strong>{{ services|length }}</strong>
+            <small>Procedimentos disponíveis</small>
+        </article>
+        <article class="stat-card">
+            <span>Status da agenda</span>
+            <strong class="{{ 'status-open' if business.booking_active else 'status-closed' }}">
+                {{ 'Ativa' if business.booking_active else 'Pausada' }}
+            </strong>
+            <small>{{ 'Recebendo solicitações' if business.booking_active else 'Agendamentos pausados' }}</small>
+        </article>
+    </div>
+
+    <div class="dashboard-grid">
+        <article class="panel-card">
+            <div class="panel-heading">
+                <div>
+                    <h2>Agendamentos recentes</h2>
+                    <p>Visualize as últimas solicitações recebidas.</p>
+                </div>
+                <a href="{{ url_for('admin_agenda') }}" class="text-button">Ver agenda →</a>
+            </div>
+
+            {% if appointments %}
+            <div class="appointment-list">
+                {% for a in appointments %}
+                <div class="appointment-item">
+                    <div>
+                        <strong>{{ a.customer_name }}</strong>
+                        <small>{{ a.service_name or 'Serviço removido' }} · {{ a.appointment_date[8:10] }}/{{ a.appointment_date[5:7] }}/{{ a.appointment_date[0:4] }} às {{ a.appointment_time }}</small>
+                    </div>
+                    <span class="status-badge {{ a.status }}">{{ status_labels.get(a.status, a.status) }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <span>▣</span>
+                <strong>Nenhum agendamento por enquanto</strong>
+                <p>Quando suas clientes solicitarem horários, eles aparecerão aqui.</p>
+            </div>
+            {% endif %}
+        </article>
+
+        <article class="panel-card quick-access">
+            <h2>Acesso rápido</h2>
+            <a href="{{ url_for('admin_horarios') }}">
+                <span>◷</span>
+                <div>
+                    <strong>Configurar horários</strong>
+                    <small>Defina sua disponibilidade</small>
+                </div>
+                <b>→</b>
+            </a>
+            <a href="{{ url_for('admin_servicos') }}">
+                <span>✧</span>
+                <div>
+                    <strong>Editar serviços</strong>
+                    <small>Preços e procedimentos</small>
+                </div>
+                <b>→</b>
+            </a>
+            <a href="{{ url_for('admin_link') }}">
+                <span>↗</span>
+                <div>
+                    <strong>Compartilhar meu site</strong>
+                    <small>Envie para suas clientes</small>
+                </div>
+                <b>→</b>
+            </a>
+        </article>
+    </div>
+</section>
+{% endblock %}

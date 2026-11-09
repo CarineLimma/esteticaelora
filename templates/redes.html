@@ -1,0 +1,65 @@
+
+{% extends "admin/base.html" %}
+{% set active = 'redes' %}
+
+{% block title %}Redes sociais{% endblock %}
+
+{% block content %}
+<section class="admin-section active" id="section-redes">
+
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">CONECTE-SE</span>
+            <h1>Redes sociais</h1>
+            <p>Adicione os canais de contato do seu negócio.</p>
+        </div>
+    </div>
+
+    <div class="panel-card">
+        <form id="socialForm" method="POST" action="{{ url_for('save_social') }}">
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="field-group">
+                <label for="instagramLink">Instagram</label>
+                <input
+                    type="text"
+                    id="instagramLink"
+                    name="instagram"
+                    value="{{ business.instagram or '' }}"
+                    placeholder="@seuperfil ou https://instagram.com/seuperfil"
+                >
+            </div>
+
+            <div class="field-group">
+                <label for="whatsappLink">WhatsApp para agendamentos</label>
+                <input
+                    type="tel"
+                    id="whatsappLink"
+                    name="whatsapp"
+                    value="{{ business.whatsapp or '' }}"
+                    placeholder="5547999999999"
+                >
+                <small>Número com DDD. O código do Brasil (55) é adicionado automaticamente.</small>
+            </div>
+
+            <div class="field-group">
+                <label for="facebookLink">Facebook</label>
+                <input
+                    type="text"
+                    id="facebookLink"
+                    name="facebook"
+                    value="{{ business.facebook or '' }}"
+                    placeholder="https://facebook.com/suapagina"
+                >
+            </div>
+
+            <button type="submit" class="primary-button">
+                Salvar redes sociais
+            </button>
+
+        </form>
+    </div>
+
+</section>
+{% endblock %}

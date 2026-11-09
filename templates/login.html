@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#17151a">
+    <meta name="description" content="Entre na sua conta e gerencie seus agendamentos.">
+    <title>Entrar | Èlora Beauty</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <main class="auth-container">
+
+        <section class="auth-visual">
+            <div class="auth-visual-content">
+                <a href="{{ url_for('home') }}" class="auth-logo">Èlora<span>.</span></a>
+
+                <div class="auth-message">
+                    <span class="auth-eyebrow">SEU ESPAÇO, SUA MARCA</span>
+                    <h1>Beleza em cada detalhe.</h1>
+                    <p>Organize sua rotina, cuide dos seus atendimentos e transforme a experiência das suas clientes.</p>
+                </div>
+
+                <div class="auth-visual-footer">
+                    <span>Sua beleza também merece organização.</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="auth-form-section">
+            <div class="auth-form-wrapper">
+
+                <div class="auth-heading">
+                    <span class="auth-eyebrow">ÁREA PROFISSIONAL</span>
+                    <h2>Bem-vinda de volta!</h2>
+                    <p>Acesse sua conta para gerenciar seu espaço.</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="auth-messages">
+                            {% for category, message in messages %}
+                                <div class="auth-alert {{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <form action="{{ url_for('login') }}" method="POST" class="auth-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="seuemail@exemplo.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Senha</label>
+                        <div class="password-wrapper">
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Digite sua senha"
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button type="button" class="toggle-password" data-target="password" aria-label="Mostrar senha">
+                                <span>Mostrar</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" name="remember">
+                            <span>Manter minha sessão iniciada</span>
+                        </label>
+                        <a href="{{ url_for('forgot_password') }}" class="forgot-link">Esqueceu a senha?</a>
+                    </div>
+
+                    <button type="submit" class="auth-button">
+                        Entrar na minha conta
+                    </button>
+                </form>
+
+                <div class="auth-bottom-link">
+                    Ainda não tem uma conta?
+                    <a href="{{ url_for('register') }}">Criar minha conta</a>
+                </div>
+
+                <footer class="auth-footer">
+                    <span>© 2026 MW3 Digital</span>
+                    <span>Tecnologia que transforma negócios.</span>
+                </footer>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.querySelectorAll(".toggle-password").forEach(button => {
+            button.addEventListener("click", () => {
+                const input = document.getElementById(button.dataset.target);
+                const isPassword = input.type === "password";
+
+                input.type = isPassword ? "text" : "password";
+                button.querySelector("span").textContent = isPassword ? "Ocultar" : "Mostrar";
+                button.setAttribute("aria-label", isPassword ? "Ocultar senha" : "Mostrar senha");
+            });
+        });
+    </script>
+</body>
+</html>

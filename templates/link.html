@@ -1,0 +1,36 @@
+{% extends "admin/base.html" %}
+{% set active = 'link' %}
+{% block title %}Meu link de agendamento{% endblock %}
+
+{% block content %}
+<section class="admin-section active" id="section-link">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">COMPARTILHE SEU ESPAÇO</span>
+            <h1>Meu link de agendamento</h1>
+            <p>Envie sua página para clientes e facilite os agendamentos.</p>
+        </div>
+    </div>
+
+    <div class="panel-card share-card">
+        <div class="share-icon">↗</div>
+        <h2>Sua página está pronta para compartilhar?</h2>
+        <p>Este é o endereço público que suas clientes poderão acessar para conhecer seus serviços e solicitar um horário.</p>
+
+        <div class="share-link-box">
+            <input type="text" id="publicBookingLink" value="{{ url_for('public_page', slug=business.slug, _external=True) }}" aria-label="Link público" readonly>
+            <button type="button" class="primary-button" id="copyBookingLink">Copiar link</button>
+        </div>
+
+        <div class="share-actions">
+            <button type="button" class="secondary-button" id="shareBookingLink">Compartilhar</button>
+            <a href="{{ url_for('public_page', slug=business.slug) }}" target="_blank" rel="noopener" class="secondary-button">Abrir minha página</a>
+        </div>
+
+        <div class="share-tip">
+            <strong>Dica:</strong>
+            <span>Coloque esse link na bio do Instagram, no WhatsApp e nos seus cartões digitais.</span>
+        </div>
+    </div>
+</section>
+{% endblock %}

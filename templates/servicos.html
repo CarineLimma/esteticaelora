@@ -1,0 +1,96 @@
+{% extends "admin/base.html" %}
+{% set active = 'servicos' %}
+{% block title %}Serviços{% endblock %}
+
+{% block content %}
+<section class="admin-section active" id="section-servicos">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">PROCEDIMENTOS</span>
+            <h1>Meus serviços</h1>
+            <p>Cadastre e atualize seus procedimentos e valores.</p>
+        </div>
+        <button type="button" class="primary-button" id="addServiceButton">+ Adicionar serviço</button>
+    </div>
+
+    <div class="services-admin-grid" id="servicesAdminList">
+        {% for service in services %}
+        {% set photo = service.photo or '' %}
+        <article class="service-admin-card">
+            <div class="service-admin-image">
+                {% if photo.startswith('/static/uploads/') %}
+                <img src="{{ photo }}" alt="{{ service.name }}" loading="lazy">
+                {% else %}
+                ✧
+                {% endif %}
+            </div>
+            <div class="service-admin-info">
+                <h3>{{ service.name }}</h3>
+                <p>{{ service.description }}</p>
+                <strong>R$ {{ "%.2f"|format(service.price)|replace(".", ",") }}</strong>
+                <small>{{ service.duration_minutes }} minutos</small>
+            </div>
+            <div class="service-admin-actions">
+                <button
+                    type="button"
+                    class="edit-service"
+                    data-id="{{ service.id }}"
+                    data-name="{{ service.name }}"
+                    data-description="{{ service.description }}"
+                    data-price="{{ '%.2f'|format(service.price) }}"
+                    data-duration="{{ service.duration_minutes }}"
+                >Editar</button>
+                <form method="POST" action="{{ url_for('admin_service_delete', service_id=service.id) }}" data-confirm="Tem certeza que deseja excluir este serviço?">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="delete-service">Excluir</button>
+                </form>
+            </div>
+        </article>
+        {% else %}
+        <p class="muted-text">Você ainda não cadastrou nenhum serviço.</p>
+        {% endfor %}
+    </div>
+
+    <div class="modal" id="serviceModal" role="dialog" aria-modal="true" aria-labelledby="serviceModalTitle">
+        <div class="modal-content">
+            <button type="button" class="modal-close" id="closeServiceModal" aria-label="Fechar">×</button>
+            <h2 id="serviceModalTitle">Adicionar serviço</h2>
+            <p>Preencha as informações do procedimento.</p>
+
+            <form id="serviceForm" method="POST" action="{{ url_for('admin_servicos') }}" enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" id="serviceId" name="service_id">
+
+                <div class="field-group">
+                    <label for="serviceName">Nome do serviço</label>
+                    <input type="text" id="serviceName" name="name" maxlength="100" required>
+                </div>
+
+                <div class="field-group">
+                    <label for="serviceDescription">Descrição</label>
+                    <textarea id="serviceDescription" name="description" rows="3" maxlength="500"></textarea>
+                </div>
+
+                <div class="form-grid">
+                    <div class="field-group">
+                        <label for="servicePrice">Preço (R$)</label>
+                        <input type="number" id="servicePrice" name="price" min="0" step="0.01" required>
+                    </div>
+                    <div class="field-group">
+                        <label for="serviceDuration">Duração (minutos)</label>
+                        <input type="number" id="serviceDuration" name="duration" min="5" max="720" required>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label for="servicePhoto">Foto do procedimento</label>
+                    <input type="file" id="servicePhoto" name="photo" accept="image/jpeg,image/png,image/webp">
+                    <small>JPG, PNG ou WEBP de até 5 MB. Ao editar, deixe em branco para manter a foto atual.</small>
+                </div>
+
+                <button type="submit" class="primary-button">Salvar serviço</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

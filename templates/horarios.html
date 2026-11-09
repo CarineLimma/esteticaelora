@@ -1,0 +1,81 @@
+{% extends "admin/base.html" %}
+{% set active = 'horarios' %}
+{% block title %}Horários disponíveis{% endblock %}
+
+{% block content %}
+<section class="admin-section active" id="section-horarios">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">DISPONIBILIDADE</span>
+            <h1>Horários disponíveis</h1>
+            <p>Configure os dias e horários em que deseja atender.</p>
+        </div>
+    </div>
+
+    <form class="panel-card" id="scheduleForm" method="POST" action="{{ url_for('admin_horarios') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="panel-heading">
+            <div>
+                <h2>Horários de funcionamento</h2>
+                <p>Defina sua rotina semanal de atendimento.</p>
+            </div>
+        </div>
+
+        <div class="schedule-list">
+            {% for day in schedule %}
+            <div class="schedule-row" data-day="{{ day.weekday }}">
+                <label>
+                    <input type="checkbox" class="day-enabled" name="enabled_{{ day.weekday }}" value="1" {% if day.enabled %}checked{% endif %}>
+                    <strong>{{ day.day_name }}</strong>
+                </label>
+                <div class="schedule-times">
+                    <input type="time" class="day-start" name="start_{{ day.weekday }}" value="{{ day.start_time }}" aria-label="Início — {{ day.day_name }}" {% if not day.enabled %}disabled{% endif %}>
+                    <span>até</span>
+                    <input type="time" class="day-end" name="end_{{ day.weekday }}" value="{{ day.end_time }}" aria-label="Término — {{ day.day_name }}" {% if not day.enabled %}disabled{% endif %}>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="field-group">
+            <label for="intervalMinutes">Intervalo entre horários</label>
+            <select id="intervalMinutes" name="interval_minutes">
+                {% for interval in [10, 15, 20, 30, 60] %}
+                <option value="{{ interval }}" {% if business.interval_minutes == interval %}selected{% endif %}>
+                    {{ interval }} minutos{% if interval == 60 %} (1 hora){% endif %}
+                </option>
+                {% endfor %}
+            </select>
+            <small>Define o intervalo entre os horários oferecidos às clientes.</small>
+        </div>
+
+        <button type="submit" class="primary-button">Salvar horários</button>
+    </form>
+
+    <div class="panel-card blocked-dates-card">
+        <h2>Datas indisponíveis</h2>
+        <p>Bloqueie dias em que não realizará atendimentos.</p>
+
+        <form class="blocked-date-form" method="POST" action="{{ url_for('admin_blocked_add') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="date" id="blockedDate" name="blocked_date" aria-label="Data a bloquear" required>
+            <button type="submit" class="secondary-button">Bloquear data</button>
+        </form>
+
+        <div id="blockedDatesList" class="blocked-dates-list">
+            {% for item in blocked_dates %}
+            <div class="blocked-date-item">
+                <span>{{ item.blocked_date[8:10] }}/{{ item.blocked_date[5:7] }}/{{ item.blocked_date[0:4] }}</span>
+                <form method="POST" action="{{ url_for('admin_blocked_remove', item_id=item.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit">Remover</button>
+                </form>
+            </div>
+            {% else %}
+            <p class="muted-text">Nenhuma data bloqueada.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

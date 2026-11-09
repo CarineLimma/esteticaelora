@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f8f4f2">
+    <meta name="description" content="Painel administrativo de gerenciamento.">
+    <title>Painel Administrativo | {{ business.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    {% set status_labels = {
+        'pending': 'Pendente',
+        'confirmed': 'Confirmado',
+        'cancelled': 'Cancelado',
+        'completed': 'Concluído'
+    } %}
+
+    <div class="admin-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <span class="brand-icon">{{ business.name[:1]|upper }}</span>
+                    <div>
+                        <strong>{{ business.name }}</strong>
+                        <small>Painel administrativo</small>
+                    </div>
+                </div>
+                <button type="button" class="close-sidebar" id="closeSidebar" aria-label="Fechar menu">×</button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <span class="nav-label">GERENCIAMENTO</span>
+                <button type="button" class="nav-item active" data-section="dashboard"><span>▦</span> Visão geral</button>
+                <button type="button" class="nav-item" data-section="agenda"><span>▣</span> Agenda</button>
+                <button type="button" class="nav-item" data-section="horarios"><span>◷</span> Horários disponíveis</button>
+                <button type="button" class="nav-item" data-section="servicos"><span>✧</span> Serviços</button>
+
+                <span class="nav-label">PERSONALIZAÇÃO</span>
+                <button type="button" class="nav-item" data-section="aparencia"><span>▧</span> Fotos e aparência</button>
+                <button type="button" class="nav-item" data-section="perfil"><span>♙</span> Informações do espaço</button>
+                <button type="button" class="nav-item" data-section="localizacao"><span>⌖</span> Endereço e localização</button>
+                <button type="button" class="nav-item" data-section="redes"><span>◎</span> Redes sociais</button>
+
+                <span class="nav-label">COMPARTILHAMENTO</span>
+                <button type="button" class="nav-item" data-section="link"><span>↗</span> Meu link de agendamento</button>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <div class="profile-mini">
+                    <div class="profile-avatar">{{ owner.name[:1]|upper }}</div>
+                    <div>
+                        <strong>{{ owner.nickname or owner.name }}</strong>
+                        <small>Proprietária</small>
+                    </div>
+                </div>
+                <a href="{{ url_for('public_page', slug=business.slug) }}" target="_blank" rel="noopener" class="view-site">↗ Visualizar meu site</a>
+                <form action="{{ url_for('logout') }}" method="POST" class="logout-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="view-site">↪ Sair da conta</button>
+                </form>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <button type="button" class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+                <div class="topbar-title">
+                    <span>Área administrativa</span>
+                    <small>Gerencie seu espaço de beleza</small>
+                </div>
+                <a href="{{ url_for('public_page', slug=business.slug) }}" target="_blank" rel="noopener" class="topbar-site">Visualizar site ↗</a>
+            </header>
+
+            <div class="content-wrapper">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-list">
+                            {% for category, message in messages %}
+                                <div class="flash {{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <section class="admin-section active" id="section-dashboard">
+                    <div class="page-heading">
+                        <div>
+                            <span class="eyebrow">SEJA BEM-VINDA</span>
+                            <h1>Olá, {{ owner.nickname or owner.name.split()[0] }}! ✨</h1>
+                            <p>Acompanhe e gerencie seu espaço por aqui.</p>
+                        </div>
+                    </div>
+
+                    <div class="stats-grid">
+                        <article class="stat-card">
+                            <span>Agendamentos hoje</span>
+                            <strong>{{ stats.today|default(0) }}</strong>
+                            <small>Compromissos do dia</small>
+                        </article>
+                        <article class="stat-card">
+                            <span>Agendamentos pendentes</span>
+                            <strong>{{ stats.pending|default(0) }}</strong>
+                            <small>Aguardando confirmação</small>
+                        </article>
+                        <article class="stat-card">
+                            <span>Serviços cadastrados</span>
+                            <strong>{{ services|length }}</strong>
+                            <small>Procedimentos disponíveis</small>
+                        </article>
+                        <article class="stat-card">
+                            <span>Status da agenda</span>
+                            <strong class="{{ 'status-open' if business.booking_active else 'status-closed' }}">
+                                {{ 'Ativa' if business.booking_active else 'Pausada' }}
+                            </strong>
+                            <small>{{ 'Recebendo solicitações' if business.booking_active else 'Agendamentos pausados' }}</small>
+                        </article>
+                    </div>
+
+                    <div class="dashboard-grid">
+                        <article class="panel-card">
+                            <div class="panel-heading">
+                                <div>
+                                    <h2>Agendamentos recentes</h2>
+                                    <p>Visualize as últimas solicitações recebidas.</p>
+                                </div>   
+                            </div>
+
+                            {% if appointments %}
+                            <div class="appointment-list">
+                                {% for a in appointments[:5] %}
+                                <div class="appointment-item">
+                                    <div>
+                                        <strong>{{ a.customer_name }}</strong>
+                                        <small>{{ a.service_name or 'Serviço removido' }} · {{ a.appointment_date[8:10] }}/{{ a.appointment_date[5:7] }}/{{ a.appointment_date[0:4] }} às {{ a.appointment_time }}</small>
+                                    </div>
+                                    <span class="status-badge {{ a.status }}">{{ status_labels.get(a.status, a.status) }}</span>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <div class="empty-state">
+                                <span>▣</span>
+                                <strong>Nenhum agendamento por enquanto</strong>
+                                <p>Quando suas clientes solicitarem horários, eles aparecerão aqui.</p>
+                            </div>
+                            {% endif %}
+                        </article>
+
+                        <article class="panel-card quick-access">
+                            <h2>Acesso rápido</h2>
+                            <button type="button" data-go="horarios">
+                                <span>◷</span>
+                                <div>
+                                    <strong>Configurar horários</strong>
+                                    <small>Defina sua disponibilidade</small>
+                                </div>
+                                <b>→</b>
+                            </button>
+                            <button type="button" data-go="servicos">
+                                <span>✧</span>
+                                <div>
+                                    <strong>Editar serviços</strong>
+                                    <small>Preços e procedimentos</small>
+                                </div>
+                                <b>→</b>
+                            </button>
+                            <button type="button" data-go="link">
+                                <span>↗</span>
+                                <div>
+                                    <strong>Compartilhar meu site</strong>
+                                    <small>Envie para suas clientes</small>
+                                </div>
+                                <b>→</b>
+                            </button>
+                        </article>
+                    </div>
+                </section>
+
+                <section class="admin-section" id="section-agenda">
+                    <div class="page-heading">
+                        <div>
+                            <span class="eyebrow">ATENDIMENTOS</span>
+                            <h1>Minha agenda</h1>
+                            <p>Acompanhe as solicitações de agendamento.</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-card">
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Agendamentos recebidos</h2>
+                                <p>Consulte os horários solicitados pelas clientes.</p>
+                            </div>
+                            <input type="date" id="filterAppointmentDate" aria-label="Filtrar por data">
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Cliente</th>
+                                        <th>Serviço</th>
+                                        <th>Data</th>
+                                        <th>Horário</th>
+                                        <th>Status</th>
+                                        <th>Ação</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appointmentsTable">
+                                    {% for a in appointments %}
+                                    <tr data-date="{{ a.appointment_date }}">
+                                        <td>
+                                            <strong>{{ a.customer_name }}</strong><br>
+                                            <small>{{ a.customer_phone }}</small>
+                                        </td>
+                                        <td>{{ a.service_name or 'Serviço removido' }}</td>
+                                        <td>{{ a.appointment_date[8:10] }}/{{ a.appointment_date[5:7] }}/{{ a.appointment_date[0:4] }}</td>
+                                        <td>{{ a.appointment_time }}</td>
+                                        <td><span class="status-badge {{ a.status }}">{{ status_labels.get(a.status, a.status) }}</span></td>
+                                        <td>
+                                            <form method="POST" action="/admin/agendamentos/{{ a.id }}/status" class="status-form">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <select name="status" aria-label="Alterar status">
+                                                    {% for value, label in status_labels.items() %}
+                                                    <option value="{{ value }}" {% if a.status == value %}selected{% endif %}>{{ label }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <button type="submit" class="text-button">Salvar</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr id="noAppointmentsRow" {% if appointments %}hidden{% endif %}>
+                                        <td colspan="6" class="table-empty">Nenhum agendamento encontrado.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="admin-section" id="section-horarios">
+                    <div class="page-heading">
+                        <div>
+                            <span class="eyebrow">DISPONIBILIDADE</span>
+                            <h1>Horários disponíveis</h1>
+                            <p>Configure os dias e horários em que deseja atender.</p>
+                        </div>
+                    </div>
+
+                    <form class="panel-card" id="scheduleForm" method="POST" action="/admin/horarios">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="panel-heading">
+                            <div>
+                                <h2>Horários de funcionamento</h2>
+                                <p>Defina sua rotina semanal de atendimento.</p>
+                            </div>
+                        </div>
+
+                        <div class="schedule-list">
+                            {% for day in schedule %}
+                            <div class="schedule-row" data-day="{{ day.weekday }}">
+                                <label>
+                                    <input type="checkbox" class="day-enabled" name="enabled_{{ day.weekday }}" value="1" {% if day.enabled %}checked{% endif %}>
+                                    <strong>{{ day.day_name }}</strong>
+                                </label>
+                                <div class="schedule-times">
+                                    <input type="time" class="day-start" name="start_{{ day.weekday }}" value="{{ day.start_time }}" {% if not day.enabled %}disabled{% endif %}>
+                                    <span>até</span>
+                                    <input type="time" class="day-end" name="end_{{ day.weekday }}" value="{{ day.end_time }}" {% if not day.enabled %}disabled{% endif %}>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="field-group">
+                            <label for="intervalMinutes">Intervalo entre horários</label>
+                            <select id="intervalMinutes" name="interval_minutes">
+                                {% for interval in [10, 15, 20, 30, 60] %}
+                                <option value="{{ interval }}" {% if business.interval_minutes == interval %}selected{% endif %}>
+                                    {{ interval }} minutos{% if interval == 60 %} (1 hora){% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <small>Define o intervalo entre os horários oferecidos às clientes.</small>
+                        </div>
+
+                        <button type="submit" class="primary-button">Salvar horários</button>
+                    </form>
+
+                    <div class="panel-card blocked-dates-card">
+                        <h2>Datas indisponíveis</h2>
+                        <p>Bloqueie dias em que não realizará atendimentos.</p>
+
+                        <form class="blocked-date-form" method="POST" action="/admin/datas-bloqueadas">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="date" id="blockedDate" name="blocked_date" required>
+                            <button type="submit" class="secondary-button">Bloquear data</button>
+                        </form>
+
+                        <div id="blockedDatesList" class="blocked-dates-list">
+                            {% for item in blocked_dates %}
+                            <div class="blocked-date-item">
+                                <span>{{ item.blocked_date[8:10] }}/{{ item.blocked_date[5:7] }}/{{ item.blocked_date[0:4] }}</span>
+                                <form method="POST" action="/admin/datas-bloqueadas/{{ item.id }}/remover">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit">Remover</button>
+                                </form>
+                            </div>
+                            {% else %}
+                            <p class="muted-text">Nenhuma data bloqueada.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </section>
+
+                <section class="admin-section" id="section-servicos">
+                    <div class="page-heading">
+                        <div>
+                            <span class="eyebrow">PROCEDIMENTOS</span>
+                            <h1>Meus serviços</h1>
+                            <p>Cadastre e atualize seus procedimentos e valores.</p>
+                        </div>
+                        <button type="button" class="primary-button" id="addServiceButton">+ Adicionar serviço</button>
+                    </div>
+
+                    <div class="services-admin-grid" id="servicesAdminList">
+                        {% for service in services %}
+                        {% set photo = service.photo or '' %}
+                        <article class="service-admin-card">
+                            <div class="service-admin-image">
+                                {% if photo.startswith('/static/uploads/') %}
+                                <img src="{{ photo }}" alt="{{ service.name }}" loading="lazy">
+                                {% else %}
+                                ✧
+                                {% endif %}
+                            </div>
+                            <div class="service-admin-info">
+                                <h3>{{ service.name }}</h3>
+                                <p>{{ service.description }}</p>
+                                <strong>R$ {{ "%.2f"|format(service.price)|replace(".", ",") }}</strong>
+                                <small>{{ service.duration_minutes }} minutos</small>
+                            </div>
+                            <div class="service-admin-actions">
+                                <button
+                                    type="button"
+                                    class="edit-service"
+                                    data-id="{{ service.id }}"
+                                    data-name="{{ service.name }}"
+                                    data-description="{{ service.description }}"
+                                    data-price="{{ '%.2f'|format(service.price) }}"
+                                    data-duration="{{ service.duration_minutes }}"
+                                >Editar</button>
+                                <form method="POST" action="/admin/servicos/{{ service.id }}/excluir" data-confirm="Tem certeza que deseja excluir este serviço?">
+                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                    <button type="submit" class="delete-service">Excluir</button>
+                                </form>
+                            </div>
+                        </article>
+                        {% else %}
+                        <p class="muted-text">Você ainda não cadastrou nenhum serviço.</p>
+                        {% endfor %}
+                    </div>
+
+                    <div class="modal" id="serviceModal">
+                        <div class="modal-content">
+                            <button type="button" class="modal-close" id="closeServiceModal" aria-label="Fechar">×</button>
+                            <h2 id="serviceModalTitle">Adicionar serviço</h2>
+                            <p>Preencha as informações do procedimento.</p>
+
+                            <form id="serviceForm" method="POST" action="/admin/servicos" enctype="multipart/form-data">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <input type="hidden" id="serviceId" name="service_id">
+
+                                <div class="field-group">
+                                    <label for="serviceName">Nome do serviço</label>
+                                    <input type="text" id="serviceName" name="name" maxlength="100" required>
+                                </div>
+
+                                <div class="field-group">
+                                    <label for="serviceDescription">Descrição</label>
+                                    <textarea id="serviceDescription" name="description" rows="3" maxlength="500"></textarea>
+                                </div>
+
+                                <div class="form-grid">
+                                    <div class="field-group">
+                                        <label for="servicePrice">Preço (R$)</label>
+                                        <input type="number" id="servicePrice" name="price" min="0" step="0.01" required>
+                                    </div>
+                                    <div class="field-group">
+                                        <label for="serviceDuration">Duração (minutos)</label>
+                                        <input type="number" id="serviceDuration" name="duration" min="5" max="720" required>
+                                    </div>
+                                </div>
+
+                                <div class="field-group">
+                                    <label for="servicePhoto">Foto do procedimento</label>
+                                    <input type="file" id="servicePhoto" name="photo" accept="image/jpeg,image/png,image/webp">
+                                    <small>JPG, PNG ou WEBP de até 5 MB.</small>
+                                </div>
+
+                                <button type="submit" class="primary-button">Salvar serviço</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="admin-section" id="section-aparencia">
+                    <div class="page-heading">
+                        <div>
+                            <span class="eyebrow">IDENTIDADE VISUAL</span>
+                            <h1>Fotos e aparência</h1>
+                            <p>Personalize as imagens que aparecem no seu site.</p>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="/admin/aparencia" enctype="multipart/form-data">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        {% set cover = business.cover_image or '' %}
+                        {% set profile_image = business.profile_image or '' %}
+
+                        <div class="panel-card">
+                            <h2>Imagem principal do site</h2>
+                            <p>Escolha a foto de destaque da página inicial.</p>
+                            <div class="upload-area">
+                                <div class="image-preview" id="coverPreview"{% if cover.startswith('/static/uploads/') %} style="background-image: url('{{ cover }}'); background-size: cover; background-position: center;"{% endif %}>
+                                    {% if not cover %}<span>Imagem de capa</span>{% endif %}
+                                </div>
+                                <input type="file" id="coverImage" name="cover_image" accept="image/jpeg,image/png,image/webp">
+                            </div>
+                        </div>
+
+                        <div class="panel-card">
+                            <h2>Foto do perfil</h2>
+                            <p>Adicione uma foto para apresentar sua marca.</p>
+                            <div class="upload-area">
+                                <div class="profile-preview" id="profilePreview"{% if profile_image.startswith('/static/uploads/') %} style="background-image: url('{{ profile_image }}'); background-size: cover; background-position: center;"{% endif %}>{% if not profile_image %}{{ business.name[:1]|upper }}{% endif %}</div>
+                                <input type="file" id="profileImage" name="profile_image" accept="image/jpeg,image/png,image/webp">
+                            </div>
+                        </div>
+
+                        <button type="submit" class="primary-button">Salvar alterações</button>
+                    </form>
+                </section>
+
+                <section class="admin-section" id="section-perfil">
+                    <div class="page-heading">
+                        <div>
+                            <span class="eyebrow">DADOS DO NEGÓCIO</span>
+                            <h1>Informações do espaço</h1>
+                            <p>Atualize as informações apresentadas às clientes.</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-card">
+                        <form id="profileForm" method="POST" action="/admin/perfil">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <div class="field-group">
+                                <label for="businessName">Nome do espaço</label>
+                                <input type="text" id="businessName" name="business_name" value="{{ business.name }}" maxlength="100" required>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="field-group">
+                                    <label for="ownerName">Nome da profissional</label>
+                                    <input type="text" id="ownerName" name="owner_name" value="{{ owner.name }}" maxlength="100" required>
+                                </div>
+                                <div class="field-group">
+                                    <label for="ownerNickname">Apelido</label>
+                                    <input type="text" id="ownerNickname" name="nickname" value="{{ owner.nickname or '' }}" maxlength="40">
+                                </div>
+                            </div>
+
+                            <div class="field-group">
+                                <label for="businessHeadline">Frase de destaque</label>
+                                <input type="text" id="businessHeadline" name="headline" value="{{ business.headline or '' }}" maxlength="120" placeholder="Sua beleza merece um momento especial.">
+                            </div>
+
+                            <div class="field-group">
+                                <label for="businessDescription">Descrição curta do espaço</label>
+                                <textarea id="businessDescription" name="description" rows="3" maxlength="300">{{ business.description }}</textarea>
+                            </div>
+
+                            <div class="field-group">
+                                <label for="businessAbout">Sobre o espaço</label>
+                                <textarea id="businessAbout" name="about" rows="5" maxlength="1000">{{ business.about }}</textarea>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="field-group">
+                                    <label for="businessPhone">Telefone de contato</label>
+                                    <input type="tel" id="businessPhone" name="phone" value="{{ owner.phone or '' }}" placeholder="(00) 00000-0000" maxlength="15">
+                                </div>
+                                <div class="field-group">
+                                    <label for="businessEmail">E-mail de acesso</label>
+                                    <input type="email" id="businessEmail" value="{{ owner.email }}" readonly>
+                                    <small class="readonly-note">O e-mail não pode ser alterado por aqui.</small>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="primary-button">Salvar informações</button>
+                        </form>
+                    </div>
+                </section>
+
+                <section class="admin-section" id="section-localizacao">
+                    <div class="page-heading">
+                        <div>
+                            <span class="eyebrow">ONDE ME ENCONTRAR</span>
+                            <h1>Endereço e localização</h1>
+                            <p>Informe onde suas clientes serão atendidas.</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-card">
+                        <form id="locationForm" method="POST" action="/admin/localizacao">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <div class="field-group">
+                                <label for="businessAddress">Endereço completo</label>
+                                <input type="text" id="businessAddress" name="address" value="{{ business.address or '' }}" maxlength="150" placeholder="Rua, número e complemento">
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="field-group">
+                                    <label for="businessNeighborhood">Bairro</label>
+                                    <input type="text" id="businessNeighborhood" name="neighborhood" value="{{ business.neighborhood or '' }}" maxlength="80">
+                                </div>
+                                <div class="field-group">
+                                    <label for="businessCity">Cidade</label>
+                                    <input type="text" id="businessCity" name="city" value="{{ business.city or '' }}" maxlength="80">
+                                </div>
+                            </div>
+
+                            <div class="form-grid">
+                                <div class="field-group">
+                                    <label for="businessState">Estado (UF)</label>
+                                    <input type="text" id="businessState" name="state" value="{{ business.state or '' }}" maxlength="2" placeholder="SC">
+                                </div>
+                                <div class="field-group">
+                                    <label for="businessZip">CEP</label>
+                                    <input type="text" id="businessZip" name="zip_code" value="{{ business.zip_code or '' }}" maxlength="9" placeholder="00000-000">
+                                </div>
+                            </div>
+
+                            <div class="field-group">
+                                <label for="mapLink">Link do Google Maps</label>
+                                <input type="url" id="mapLink" name="map_link" value="{{ business.map_link or '' }}" placeholder="https://maps.google.com/...">
+                            </div>
+
+                            <div class="field-group">
+                                <label for="mapEmbed">Mapa incorporado (opcional)</label>
+                                <input type="text" id="mapEmbed" name="map_embed_url" value="{{ business.map_embed_url or '' }}" placeholder="Cole o código ou o link de incorporação do Google Maps">
+                                <small>No Google Maps: Compartilhar → Incorporar um mapa → copiar HTML.</small>
+                            </div>
+
+                            <button type="submit" class="primary-button">Salvar localização</button>
+                        </form>
+                    </div>
+                </section>
+
+                <section class="admin-section" id="section-redes">
+                    <div class="page-heading">
+                        <div>
+                            <span class="eyebrow">CONECTE-SE</span>
+                            <h1>Redes sociais</h1>
+                            <p>Adicione os canais de contato do seu negócio.</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-card">
+                        <form id="socialForm" method="POST" action="/admin/redes">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                            <div class="field-group">
+                                <label for="instagramLink">Instagram</label>
+                                <input type="text" id="instagramLink" name="instagram" value="{{ business.instagram or '' }}" placeholder="@seuperfil ou https://instagram.com/seuperfil">
+                            </div>
+
+                            <div class="field-group">
+                                <label for="whatsappLink">WhatsApp para agendamentos</label>
+                                <input type="tel" id="whatsappLink" name="whatsapp" value="{{ business.whatsapp or '' }}" placeholder="5547999999999">
+                                <small>Número com DDD. O código do Brasil (55) é adicionado automaticamente.</small>
+                            </div>
+
+                            <div class="field-group">
+                                <label for="facebookLink">Facebook</label>
+                                <input type="text" id="facebookLink" name="facebook" value="{{ business.facebook or '' }}" placeholder="https://facebook.com/suapagina">
+                            </div>
+
+                            <button type="submit" class="primary-button">Salvar redes sociais</button>
+                        </form>
+                    </div>
+                </section>
+
+                <section class="admin-section" id="section-link">
+                    <div class="page-heading">
+                        <div>
+                            <span class="eyebrow">COMPARTILHE SEU ESPAÇO</span>
+                            <h1>Meu link de agendamento</h1>
+                            <p>Envie sua página para clientes e facilite os agendamentos.</p>
+                        </div>
+                    </div>
+
+                    <div class="panel-card share-card">
+                        <div class="share-icon">↗</div>
+                        <h2>Sua página está pronta para compartilhar?</h2>
+                        <p>Este é o endereço público que suas clientes poderão acessar para conhecer seus serviços e solicitar um horário.</p>
+
+                        <div class="share-link-box">
+                            <input type="text" id="publicBookingLink" value="{{ url_for('public_page', slug=business.slug, _external=True) }}" readonly>
+                            <button type="button" class="primary-button" id="copyBookingLink">Copiar link</button>
+                        </div>
+
+                        <div class="share-actions">
+                            <button type="button" class="secondary-button" id="shareBookingLink">Compartilhar</button>
+                            <a href="{{ url_for('public_page', slug=business.slug) }}" target="_blank" rel="noopener" class="secondary-button">Abrir minha página</a>
+                        </div>
+
+                        <div class="share-tip">
+                            <strong>Dica:</strong>
+                            <span>Coloque esse link na bio do Instagram, no WhatsApp e nos seus cartões digitais.</span>
+                        </div>
+                    </div>
+                </section>
+           
+               <footer class="system-footer">
+    <p>© 2026 Todos os direitos reservados.</p>
+    <span>
+        Desenvolvido por
+        <a href="https://mw3digital.netlify.app"
+           target="_blank"
+           rel="noopener noreferrer">
+            MW3 Digital
+        </a>
+    </span>
+</footer>
+
+    <script>
+        window.ADMIN_CONFIG = {
+            businessName: {{ business.name|tojson }}
+        };
+    </script>
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+{% extends "admin/base.html" %}
+{% set active = 'localizacao' %}
+{% block title %}Endereço e localização{% endblock %}
+
+{% block content %}
+<section class="admin-section active" id="section-localizacao">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">ONDE ME ENCONTRAR</span>
+            <h1>Endereço e localização</h1>
+            <p>Informe onde suas clientes serão atendidas.</p>
+        </div>
+    </div>
+
+    <div class="panel-card">
+        <form id="locationForm" method="POST" action="{{ url_for('admin_localizacao') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="field-group">
+                <label for="businessAddress">Endereço completo</label>
+                <input type="text" id="businessAddress" name="address" value="{{ business.address or '' }}" maxlength="150" placeholder="Rua, número e complemento">
+            </div>
+
+            <div class="form-grid">
+                <div class="field-group">
+                    <label for="businessNeighborhood">Bairro</label>
+                    <input type="text" id="businessNeighborhood" name="neighborhood" value="{{ business.neighborhood or '' }}" maxlength="80">
+                </div>
+                <div class="field-group">
+                    <label for="businessCity">Cidade</label>
+                    <input type="text" id="businessCity" name="city" value="{{ business.city or '' }}" maxlength="80">
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="field-group">
+                    <label for="businessState">Estado (UF)</label>
+                    <input type="text" id="businessState" name="state" value="{{ business.state or '' }}" maxlength="2" placeholder="SC">
+                </div>
+                <div class="field-group">
+                    <label for="businessZip">CEP</label>
+                    <input type="text" id="businessZip" name="zip_code" value="{{ business.zip_code or '' }}" maxlength="9" placeholder="00000-000" inputmode="numeric">
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label for="mapLink">Link do Google Maps</label>
+                <input type="url" id="mapLink" name="map_link" value="{{ business.map_link or '' }}" placeholder="https://maps.google.com/...">
+            </div>
+
+            <div class="field-group">
+                <label for="mapEmbed">Mapa incorporado (opcional)</label>
+                <input type="text" id="mapEmbed" name="map_embed_url" value="{{ business.map_embed_url or '' }}" placeholder="Cole o código ou o link de incorporação do Google Maps">
+                <small>No Google Maps: Compartilhar → Incorporar um mapa → copiar HTML.</small>
+            </div>
+
+            <button type="submit" class="primary-button">Salvar localização</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "auth_base.html" %}
+{% block title %}Primeiro acesso{% endblock %}
+
+{% block content %}
+<span class="eyebrow">PRIMEIRO ACESSO</span>
+<h1>Crie sua conta</h1>
+<p class="auth-lead">Cadastre a proprietária e o nome do espaço. Você poderá completar o restante depois, pelo painel.</p>
+
+<form method="POST" action="{{ url_for('setup') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="field-group">
+        <label for="setupBusiness">Nome do espaço</label>
+        <input type="text" id="setupBusiness" name="business_name" maxlength="100" value="{{ form.get('business_name', '') }}" required autofocus>
+    </div>
+
+    <div class="form-grid">
+        <div class="field-group">
+            <label for="setupName">Seu nome</label>
+            <input type="text" id="setupName" name="name" maxlength="100" value="{{ form.get('name', '') }}" autocomplete="name" required>
+        </div>
+        <div class="field-group">
+            <label for="setupNickname">Apelido</label>
+            <input type="text" id="setupNickname" name="nickname" maxlength="40" value="{{ form.get('nickname', '') }}">
+        </div>
+    </div>
+
+    <div class="field-group">
+        <label for="setupEmail">E-mail de acesso</label>
+        <input type="email" id="setupEmail" name="email" maxlength="150" value="{{ form.get('email', '') }}" autocomplete="username" required>
+    </div>
+
+    <div class="form-grid">
+        <div class="field-group">
+            <label for="setupPassword">Senha</label>
+            <input type="password" id="setupPassword" name="password" minlength="8" autocomplete="new-password" required>
+            <small>Mínimo de 8 caracteres.</small>
+        </div>
+        <div class="field-group">
+            <label for="setupPasswordConfirm">Confirmar senha</label>
+            <input type="password" id="setupPasswordConfirm" name="password_confirm" minlength="8" autocomplete="new-password" required>
+        </div>
+    </div>
+
+    <button type="submit" class="primary-button">Criar conta e entrar</button>
+</form>
+{% endblock %}

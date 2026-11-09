@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#17151a">
+    <title>Recuperar senha | Èlora Beauty</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <main class="auth-container">
+        <section class="auth-visual">
+            <div class="auth-visual-content">
+                <a href="{{ url_for('home') }}" class="auth-logo">Èlora<span>.</span></a>
+
+                <div class="auth-message">
+                    <span class="auth-eyebrow">SUA CONTA, SEU ESPAÇO</span>
+                    <h1>Vamos recuperar seu acesso?</h1>
+                    <p>Não se preocupe. Informe seu e-mail cadastrado e enviaremos as instruções para recuperar sua senha.</p>
+                </div>
+
+                <div class="auth-visual-footer">
+                    <span>Organize. Conecte. Cresça.</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="auth-form-section">
+            <div class="auth-form-wrapper">
+                <div class="auth-heading">
+                    <span class="auth-eyebrow">RECUPERAÇÃO DE ACESSO</span>
+                    <h2>Esqueceu sua senha?</h2>
+                    <p>Digite o e-mail utilizado no cadastro para iniciar a recuperação.</p>
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="auth-messages">
+                            {% for category, message in messages %}
+                                <div class="auth-alert {{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <form action="{{ url_for('forgot_password') }}" method="POST" class="auth-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="form-group">
+                        <label for="email">E-mail cadastrado</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="seuemail@exemplo.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="auth-button">
+                        Enviar instruções
+                    </button>
+                </form>
+
+                <div class="auth-bottom-link">
+                    <a href="{{ url_for('login') }}">← Voltar para o login</a>
+                </div>
+
+                <footer class="auth-footer">
+                    <span>© 2026 MW3 Digital</span>
+                    <span>Tecnologia que transforma negócios.</span>
+                </footer>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

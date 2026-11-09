@@ -1,0 +1,8 @@
+Flask
+Flask-SQLAlchemy
+Flask-WTF
+Flask-Mail
+Werkzeug
+gunicorn
+python-dotenv
+Pillow

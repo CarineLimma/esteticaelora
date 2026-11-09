@@ -1,0 +1,66 @@
+{% extends "admin/base.html" %}
+{% set active = 'perfil' %}
+{% block title %}Informações do espaço{% endblock %}
+
+{% block content %}
+<section class="admin-section active" id="section-perfil">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">DADOS DO NEGÓCIO</span>
+            <h1>Informações do espaço</h1>
+            <p>Atualize as informações apresentadas às clientes.</p>
+        </div>
+    </div>
+
+    <div class="panel-card">
+        <form id="profileForm" method="POST" action="{{ url_for('admin_perfil') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <div class="field-group">
+                <label for="businessName">Nome do espaço</label>
+                <input type="text" id="businessName" name="business_name" value="{{ business.name }}" maxlength="100" required>
+            </div>
+
+            <div class="form-grid">
+                <div class="field-group">
+                    <label for="ownerName">Nome da profissional</label>
+                    <input type="text" id="ownerName" name="owner_name" value="{{ owner.name }}" maxlength="100" required>
+                </div>
+                <div class="field-group">
+                    <label for="ownerNickname">Apelido</label>
+                    <input type="text" id="ownerNickname" name="nickname" value="{{ owner.nickname or '' }}" maxlength="40">
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label for="businessHeadline">Frase de destaque</label>
+                <input type="text" id="businessHeadline" name="headline" value="{{ business.headline or '' }}" maxlength="120" placeholder="Sua beleza merece um momento especial.">
+            </div>
+
+            <div class="field-group">
+                <label for="businessDescription">Descrição curta do espaço</label>
+                <textarea id="businessDescription" name="description" rows="3" maxlength="300">{{ business.description or '' }}</textarea>
+            </div>
+
+            <div class="field-group">
+                <label for="businessAbout">Sobre o espaço</label>
+                <textarea id="businessAbout" name="about" rows="5" maxlength="1000">{{ business.about or '' }}</textarea>
+            </div>
+
+            <div class="form-grid">
+                <div class="field-group">
+                    <label for="businessPhone">Telefone de contato</label>
+                    <input type="tel" id="businessPhone" name="phone" value="{{ owner.phone or '' }}" placeholder="(00) 00000-0000" maxlength="15">
+                </div>
+                <div class="field-group">
+                    <label for="businessEmail">E-mail de acesso</label>
+                    <input type="email" id="businessEmail" value="{{ owner.email }}" readonly>
+                    <small class="readonly-note">O e-mail não pode ser alterado por aqui.</small>
+                </div>
+            </div>
+
+            <button type="submit" class="primary-button">Salvar informações</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
