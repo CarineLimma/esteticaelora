@@ -66,9 +66,11 @@
             </div>
         </aside>
 
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
         <main class="main-content">
             <header class="topbar">
-                <button type="button" class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+                <button type="button" class="menu-toggle" id="menuToggle" aria-label="Abrir menu" aria-expanded="false">☰</button>
                 <div class="topbar-title">
                     <span>Área administrativa</span>
                     <small>Gerencie seu espaço de beleza</small>
@@ -127,7 +129,7 @@
                                 <div>
                                     <h2>Agendamentos recentes</h2>
                                     <p>Visualize as últimas solicitações recebidas.</p>
-                                </div>   
+                                </div>
                             </div>
 
                             {% if appointments %}
@@ -631,18 +633,21 @@
                         </div>
                     </div>
                 </section>
-           
-               <footer class="system-footer">
-    <p>© 2026 Todos os direitos reservados.</p>
-    <span>
-        Desenvolvido por
-        <a href="https://mw3digital.netlify.app"
-           target="_blank"
-           rel="noopener noreferrer">
-            MW3 Digital
-        </a>
-    </span>
-</footer>
+
+                <footer class="system-footer">
+                    <p>© 2026 Todos os direitos reservados.</p>
+                    <span>
+                        Desenvolvido por
+                        <a href="https://mw3digital.netlify.app"
+                           target="_blank"
+                           rel="noopener noreferrer">
+                            MW3 Digital
+                        </a>
+                    </span>
+                </footer>
+            </div><!-- /content-wrapper -->
+        </main>
+    </div><!-- /admin-layout -->
 
     <script>
         window.ADMIN_CONFIG = {

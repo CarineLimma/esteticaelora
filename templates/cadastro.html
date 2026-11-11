@@ -10,81 +10,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
-
-    <style>
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        @media (max-width: 520px) {
-            .form-row { grid-template-columns: 1fr; }
-        }
-
-        .field-hint {
-            min-height: 14px;
-            font-size: 11px;
-            line-height: 1.4;
-            color: var(--auth-error);
-        }
-
-        .field-hint.ok { color: var(--auth-success); }
-
-        .form-group input.invalid { border-color: var(--auth-error); }
-        .form-group input.valid   { border-color: var(--auth-success); }
-
-        .password-rules {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 6px 14px;
-            margin-top: 4px;
-            padding: 12px 14px;
-            list-style: none;
-            border: 1px solid var(--auth-border);
-            border-radius: 7px;
-            background: var(--auth-white);
-        }
-
-        @media (max-width: 520px) {
-            .password-rules { grid-template-columns: 1fr; }
-        }
-
-        .password-rules li {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-            font-size: 11px;
-            color: var(--auth-muted);
-            transition: color 0.2s;
-        }
-
-        .password-rules li::before {
-            content: "○";
-            font-size: 12px;
-        }
-
-        .password-rules li.ok {
-            color: var(--auth-success);
-        }
-
-        .password-rules li.ok::before {
-            content: "●";
-        }
-
-        .auth-button:disabled {
-            opacity: 0.45;
-            cursor: not-allowed;
-        }
-
-        .form-note {
-            margin-top: -8px;
-            color: var(--auth-muted);
-            font-size: 11px;
-            text-align: center;
-        }
-    </style>
 </head>
 
 <body>
@@ -147,7 +72,7 @@
                                 type="text"
                                 id="nickname"
                                 name="nickname"
-                                placeholder="Como quer ser chamada?"
+                                placeholder="Como te chamar?"
                                 autocomplete="nickname"
                                 maxlength="40"
                                 required
@@ -181,73 +106,77 @@
                         >
                     </div>
 
-                    <div class="form-group">
-                        <label for="email">E-mail</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            placeholder="seuemail@exemplo.com"
-                            autocomplete="email"
-                            required
-                        >
-                        <span class="field-hint" id="email-hint"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirm_email">Confirmar e-mail</label>
-                        <input
-                            type="email"
-                            id="confirm_email"
-                            name="confirm_email"
-                            placeholder="Digite seu e-mail novamente"
-                            autocomplete="off"
-                            required
-                        >
-                        <span class="field-hint" id="confirm-email-hint"></span>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Senha</label>
-                        <div class="password-wrapper">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="email">E-mail</label>
                             <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                placeholder="Crie uma senha forte"
-                                autocomplete="new-password"
+                                type="email"
+                                id="email"
+                                name="email"
+                                placeholder="seuemail@exemplo.com"
+                                autocomplete="email"
                                 required
                             >
-                            <button type="button" class="toggle-password" data-target="password" aria-label="Mostrar senha">
-                                <span>Mostrar</span>
-                            </button>
+                            <span class="field-hint" id="email-hint"></span>
                         </div>
 
-                        <ul class="password-rules" id="password-rules" aria-live="polite">
-                            <li data-rule="length">Mínimo de 8 caracteres</li>
-                            <li data-rule="upper">Uma letra maiúscula</li>
-                            <li data-rule="number">Um número</li>
-                            <li data-rule="special">Um caractere especial (!@#$...)</li>
-                        </ul>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirm_password">Confirmar senha</label>
-                        <div class="password-wrapper">
+                        <div class="form-group">
+                            <label for="confirm_email">Confirmar e-mail</label>
                             <input
-                                type="password"
-                                id="confirm_password"
-                                name="confirm_password"
-                                placeholder="Digite sua senha novamente"
-                                autocomplete="new-password"
+                                type="email"
+                                id="confirm_email"
+                                name="confirm_email"
+                                placeholder="Repita o e-mail"
+                                autocomplete="off"
                                 required
                             >
-                            <button type="button" class="toggle-password" data-target="confirm_password" aria-label="Mostrar senha">
-                                <span>Mostrar</span>
-                            </button>
+                            <span class="field-hint" id="confirm-email-hint"></span>
                         </div>
-                        <span class="field-hint" id="confirm-password-hint"></span>
                     </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Senha</label>
+                            <div class="password-wrapper">
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    placeholder="Crie uma senha"
+                                    autocomplete="new-password"
+                                    required
+                                >
+                                <button type="button" class="toggle-password" data-target="password" aria-label="Mostrar senha">
+                                    <span>Mostrar</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm_password">Confirmar senha</label>
+                            <div class="password-wrapper">
+                                <input
+                                    type="password"
+                                    id="confirm_password"
+                                    name="confirm_password"
+                                    placeholder="Repita a senha"
+                                    autocomplete="new-password"
+                                    required
+                                >
+                                <button type="button" class="toggle-password" data-target="confirm_password" aria-label="Mostrar senha">
+                                    <span>Mostrar</span>
+                                </button>
+                            </div>
+                            <span class="field-hint" id="confirm-password-hint"></span>
+                        </div>
+                    </div>
+
+                    <ul class="password-rules" id="password-rules" aria-live="polite">
+                        <li data-rule="length">8+ caracteres</li>
+                        <li data-rule="upper">Letra maiúscula</li>
+                        <li data-rule="number">Um número</li>
+                        <li data-rule="special">Especial (!@#$)</li>
+                    </ul>
 
                     <div class="form-options">
                         <label class="checkbox-label">

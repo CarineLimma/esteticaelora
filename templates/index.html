@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -7,35 +6,49 @@
     <meta name="theme-color" content="#fffaf9">
     <meta name="description" content="{{ business.description }}">
     <meta name="robots" content="index, follow">
-    <title>Studio Élora | Beleza e Autocuidado</title>
+    <title>{{ business.name or 'Studio Élora' }} | Beleza e Autocuidado</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
+
 <header class="header">
-    <a href="#inicio" class="logo">Studio Élora</a>
+    <a href="#inicio" class="logo">
+        <img src="{{ url_for('static', filename='css/img/logo-estetica.png') }}" alt="Logo Studio Élora">
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+    </button>
+    <nav class="header-nav" id="headerNav" aria-label="Navegação principal">
+        <a href="#sobre" onclick="closeNav()">Sobre</a>
+        <a href="#servicos" onclick="closeNav()">Serviços</a>
+        <a href="#agendamento" onclick="closeNav()">Agendamento</a>
+        <a href="#localizacao" onclick="closeNav()">Localização</a>
+        <a href="#agendamento" class="btn nav-btn" onclick="closeNav()">Agendar</a>
+    </nav>
 </header>
+
 <main>
+
     <section class="hero" id="inicio">
         <div class="hero-content">
-            <img class="hero-logo" src="{{ url_for('static', filename='css/img/logo-estetica.png') }}" alt="Studio Élora">
-            <span class="hero-subtitle">BELEZA • CUIDADO • AUTOESTIMA</span>
+            <span class="hero-subtitle">BELEZA · CUIDADO · AUTOESTIMA</span>
             <h1>{{ business.headline or 'Sua beleza merece um momento especial.' }}</h1>
             <p>{{ business.description }}</p>
+            <span class="hero-decoration">UM MOMENTO ESPECIAL PARA VOCÊ</span>
         </div>
-        <img class="hero-image" src="{{ url_for('static', filename='css/img/mulher-sem-fundo.png') }}" alt="Studio Élora">
     </section>
 
     <section class="about" id="sobre">
         <div class="about-container">
             <div class="about-image">
-                <img src="{{ url_for('static', filename='css/img/studio.jpg') }}" alt="Ambiente do Studio Élora" loading="lazy">
+                <img src="{{ url_for('static', filename='css/img/studio.jpg') }}" alt="Ambiente do Studio" loading="lazy">
             </div>
             <div class="about-content">
                 <span>UM ESPAÇO FEITO PARA VOCÊ</span>
                 <h2>Nosso espaço</h2>
                 <p>{{ business.about or business.description }}</p>
                 <p>Um ambiente preparado com carinho para proporcionar momentos de beleza, cuidado e bem-estar.</p>
-                <a href="#agendamento" class="btn">Agende sua visita</a>
             </div>
         </div>
     </section>
@@ -46,64 +59,96 @@
             <h2>Nossos serviços</h2>
             <p>Descubra nossos procedimentos e escolha seu momento de autocuidado.</p>
         </div>
-        <details class="services-dropdown">
-            <summary>
-                <span>Conheça todos os nossos serviços</span>
-                <span class="dropdown-arrow" aria-hidden="true">⌄</span>
-            </summary>
-            <div class="services-grid">
-                <article class="service-card">
-                    <div class="service-image">
-                        <img src="{{ url_for('static', filename='css/img/limpeza-pele.png') }}" alt="Limpeza de pele" loading="lazy">
-                    </div>
-                    <div class="service-card-content">
-                        <p>Renovação, purificação e cuidado para uma pele mais saudável e iluminada.</p>
-                        <div class="service-info">
-                            <strong>R$ 120,00</strong>
-                            <span>60 min</span>
+
+        <details class="services-collapse">
+            <summary class="btn services-toggle">Ver serviços</summary>
+            <div class="services-collapse-inner">
+                <div class="services-grid">
+                    <article class="service-card">
+                        <div class="service-image">
+                            <img src="{{ url_for('static', filename='css/img/limpeza-pele.png') }}" alt="Limpeza de pele" loading="lazy">
                         </div>
-                        <button type="button" class="btn service-select" data-service="Limpeza de Pele" data-price="120" data-duration="60">Agendar procedimento</button>
-                    </div>
-                </article>
-                <article class="service-card">
-                    <div class="service-image">
-                        <img src="{{ url_for('static', filename='css/img/sobrancelha.jpg') }}" alt="Design de sobrancelhas" loading="lazy">
-                    </div>
-                    <div class="service-card-content">
-                        <p>Modelagem personalizada para valorizar a harmonia do seu rosto.</p>
-                        <div class="service-info">
-                            <strong>R$ 45,00</strong>
-                            <span>30 min</span>
+                        <div class="service-card-content">
+                            <h3>Limpeza de Pele</h3>
+                            <p>Renovação, purificação e cuidado para uma pele mais saudável e iluminada.</p>
+                            <div class="service-info">
+                                <strong>R$ 120,00</strong>
+                                <span>60 min</span>
+                            </div>
+                            <button type="button" class="btn service-select" data-service="Limpeza de Pele" data-price="120" data-duration="60">Agendar</button>
                         </div>
-                        <button type="button" class="btn service-select" data-service="Design de Sobrancelhas" data-price="45" data-duration="30">Agendar procedimento</button>
-                    </div>
-                </article>
-                <article class="service-card">
-                    <div class="service-image">
-                        <img src="{{ url_for('static', filename='css/img/lash.jpg') }}" alt="Lash lifting" loading="lazy">
-                    </div>
-                    <div class="service-card-content">
-                        <p>Curvatura e destaque natural para os cílios, sem necessidade de extensão.</p>
-                        <div class="service-info">
-                            <strong>R$ 120,00</strong>
-                            <span>60 min</span>
+                    </article>
+                    <article class="service-card">
+                        <div class="service-image">
+                            <img src="{{ url_for('static', filename='css/img/sobrancelha.jpg') }}" alt="Design de sobrancelhas" loading="lazy">
                         </div>
-                        <button type="button" class="btn service-select" data-service="Lash Lifting" data-price="120" data-duration="60">Agendar procedimento</button>
-                    </div>
-                </article>
-                <article class="service-card">
-                    <div class="service-image">
-                        <img src="{{ url_for('static', filename='css/img/extensao.jpg') }}" alt="Extensão de cílios" loading="lazy">
-                    </div>
-                    <div class="service-card-content">
-                        <p>Fios aplicados um a um para cílios mais longos, volumosos e definidos, com acabamento natural.</p>
-                        <div class="service-info">
-                            <strong>R$ 150,00</strong>
-                            <span>90 min</span>
+                        <div class="service-card-content">
+                            <h3>Design de Sobrancelhas</h3>
+                            <p>Modelagem personalizada para valorizar a harmonia do seu rosto.</p>
+                            <div class="service-info">
+                                <strong>R$ 45,00</strong>
+                                <span>30 min</span>
+                            </div>
+                            <button type="button" class="btn service-select" data-service="Design de Sobrancelhas" data-price="45" data-duration="30">Agendar</button>
                         </div>
-                        <button type="button" class="btn service-select" data-service="Extensão de Cílios" data-price="150" data-duration="90">Agendar procedimento</button>
-                    </div>
-                </article>
+                    </article>
+                    <article class="service-card">
+                        <div class="service-image">
+                            <img src="{{ url_for('static', filename='css/img/lash.jpg') }}" alt="Lash lifting" loading="lazy">
+                        </div>
+                        <div class="service-card-content">
+                            <h3>Lash Lifting</h3>
+                            <p>Curvatura e destaque natural para os cílios, sem necessidade de extensão.</p>
+                            <div class="service-info">
+                                <strong>R$ 120,00</strong>
+                                <span>60 min</span>
+                            </div>
+                            <button type="button" class="btn service-select" data-service="Lash Lifting" data-price="120" data-duration="60">Agendar</button>
+                        </div>
+                    </article>
+                    <article class="service-card">
+                        <div class="service-image">
+                            <img src="{{ url_for('static', filename='css/img/extensao.jpg') }}" alt="Extensão de cílios" loading="lazy">
+                        </div>
+                        <div class="service-card-content">
+                            <h3>Extensão de Cílios</h3>
+                            <p>Fios aplicados um a um para cílios mais longos, volumosos e definidos, com acabamento natural.</p>
+                            <div class="service-info">
+                                <strong>R$ 150,00</strong>
+                                <span>90 min</span>
+                            </div>
+                            <button type="button" class="btn service-select" data-service="Extensão de Cílios" data-price="150" data-duration="90">Agendar</button>
+                        </div>
+                    </article>
+                    <article class="service-card">
+                        <div class="service-image">
+                            <img src="{{ url_for('static', filename='css/img/depilacao.jpg') }}" alt="Depilação" loading="lazy">
+                        </div>
+                        <div class="service-card-content">
+                            <h3>Depilação</h3>
+                            <p>Pele lisa e suave com técnicas suaves e eficientes para todos os tipos de pele.</p>
+                            <div class="service-info">
+                                <strong>A consultar</strong>
+                                <span>Variável</span>
+                            </div>
+                            <button type="button" class="btn service-select" data-service="Depilação" data-price="0" data-duration="30">Agendar</button>
+                        </div>
+                    </article>
+                    <article class="service-card">
+                        <div class="service-image">
+                            <img src="{{ url_for('static', filename='css/img/dermo.jpg') }}" alt="Dermaplaning" loading="lazy">
+                        </div>
+                        <div class="service-card-content">
+                            <h3>Dermaplaning</h3>
+                            <p>Esfoliação profunda para remover células mortas e pelos, deixando a pele radiante e aveludada.</p>
+                            <div class="service-info">
+                                <strong>A consultar</strong>
+                                <span>45 min</span>
+                            </div>
+                            <button type="button" class="btn service-select" data-service="Dermaplaning" data-price="0" data-duration="45">Agendar</button>
+                        </div>
+                    </article>
+                </div>
             </div>
         </details>
     </section>
@@ -180,7 +225,7 @@
                     </div>
                     <div class="form-group">
                         <label for="customer-notes">Observações (opcional)</label>
-                        <textarea id="customer-notes" name="notes" rows="4" maxlength="500" placeholder="Alguma informação importante?"></textarea>
+                        <textarea id="customer-notes" name="notes" rows="3" maxlength="500" placeholder="Alguma informação importante?"></textarea>
                     </div>
                     <div class="booking-actions">
                         <button type="button" class="btn btn-secondary booking-back" data-back="date">Voltar</button>
@@ -206,7 +251,7 @@
                 </div>
                 <div class="booking-actions">
                     <button type="button" class="btn btn-secondary booking-back" data-back="customer">Voltar</button>
-                    <button type="button" class="btn" id="confirm-booking">Enviar solicitação pelo WhatsApp</button>
+                    <button type="button" class="btn" id="confirm-booking">Enviar pelo WhatsApp</button>
                 </div>
             </div>
         </div>
@@ -221,9 +266,9 @@
         <div class="details-grid">
             <div class="location-map">
                 <h3>Localização</h3>
-                <iframe src="https://www.google.com/maps?q=Centro,Joinville,SC,Brasil&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa do Centro de Joinville" allowfullscreen></iframe>
+                <iframe src="https://www.google.com/maps?q=Centro,Joinville,SC,Brasil&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa" allowfullscreen></iframe>
                 <p>Centro, Joinville - SC</p>
-                <a href="https://www.google.com/maps/search/?api=1&query=Centro%2C+Joinville%2C+SC" target="_blank" rel="noopener noreferrer">Como chegar</a>
+                <a href="https://www.google.com/maps/search/?api=1&query=Centro%2C+Joinville%2C+SC" target="_blank" rel="noopener noreferrer">Como chegar →</a>
             </div>
             <div class="opening-hours">
                 <h3>Horários de atendimento</h3>
@@ -239,27 +284,25 @@
         </div>
     </section>
 
-    
-<section class="social" aria-label="Redes sociais">
-    <a href="https://www.instagram.com/mw3digital/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="social-link">
-        <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="18" height="18" rx="5"/>
-            <circle cx="12" cy="12" r="4"/>
-            <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/>
-        </svg>
-        <span>Instagram</span>
-    </a>
-
-    {% if business.whatsapp %}
-    <a href="https://wa.me/{{ business.whatsapp|replace(' ', '')|replace('(', '')|replace(')', '')|replace('-', '')|replace('+', '') }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="social-link">
-        <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5Z"/>
-            <path d="M9 9a5 5 0 0 0 6 6"/>
-        </svg>
-        <span>WhatsApp</span>
-    </a>
-    {% endif %}
-</section>
+    <section class="social" aria-label="Redes sociais">
+        <a href="https://www.instagram.com/mw3digital/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="social-link">
+            <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="5"/>
+                <circle cx="12" cy="12" r="4"/>
+                <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor"/>
+            </svg>
+            <span>Instagram</span>
+        </a>
+        {% if business.whatsapp %}
+        <a href="https://wa.me/{{ business.whatsapp|replace(' ', '')|replace('(', '')|replace(')', '')|replace('-', '')|replace('+', '') }}" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" class="social-link">
+            <svg viewBox="0 0 24 24" width="23" height="23" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.4A8.4 8.4 0 1 1 21 11.5Z"/>
+                <path d="M9 9a5 5 0 0 0 6 6"/>
+            </svg>
+            <span>WhatsApp</span>
+        </a>
+        {% endif %}
+    </section>
 
 </main>
 
@@ -275,6 +318,22 @@
         interval: {{ (business.interval_minutes or 30)|tojson }},
         schedule: {{ schedule|tojson }}
     };
+
+
+    const navToggle = document.getElementById('navToggle');
+    const headerNav = document.getElementById('headerNav');
+    navToggle.addEventListener('click', () => {
+        const open = headerNav.classList.toggle('open');
+        navToggle.classList.toggle('open', open);
+        navToggle.setAttribute('aria-expanded', String(open));
+    });
+    function closeNav() {
+        headerNav.classList.remove('open');
+        navToggle.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeNav(); });
+
 </script>
 <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>

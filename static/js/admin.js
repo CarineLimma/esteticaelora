@@ -1,4 +1,3 @@
-
 (function () {
     "use strict";
 
@@ -7,8 +6,6 @@
 
     const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
     const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
-
- 
 
     const navItems = $$(".nav-item[data-section]");
     const adminSections = $$(".admin-section");
@@ -82,7 +79,7 @@
 
     if (menuToggle) {
         menuToggle.addEventListener("click", () => {
-            setSidebar(!sidebar?.classList.contains("open"));
+            setSidebar(!(sidebar && sidebar.classList.contains("open")));
         });
     }
 
@@ -99,8 +96,6 @@
             setSidebar(false);
         }
     });
-
-  
 
     $$(".flash").forEach(flash => {
         setTimeout(() => {
@@ -121,8 +116,6 @@
         }, 6000);
     });
 
-  
-
     $$("form[data-confirm]").forEach(form => {
         form.addEventListener("submit", event => {
             if (!window.confirm(form.dataset.confirm)) {
@@ -130,8 +123,6 @@
             }
         });
     });
-
- 
 
     $$("form").forEach(form => {
         form.addEventListener("submit", event => {
@@ -152,8 +143,6 @@
             button.disabled = false;
         });
     });
-
-  
 
     const filterDate = $("#filterAppointmentDate");
     const appointmentsTable = $("#appointmentsTable");
@@ -177,8 +166,6 @@
             }
         });
     }
-
-   
 
     $$(".schedule-row").forEach(row => {
         const checkbox = $(".day-enabled", row);
@@ -213,7 +200,8 @@
                 ) {
                     event.preventDefault();
 
-                    const name = $("strong", row)?.textContent.trim() || "dia";
+                    const strong = $("strong", row);
+                    const name = strong ? strong.textContent.trim() : "dia";
 
                     alert(
                         "Em " + name +
@@ -227,8 +215,6 @@
         });
     }
 
-
-
     const blockedDate = $("#blockedDate");
 
     if (blockedDate) {
@@ -240,8 +226,6 @@
             pad(now.getMonth() + 1) + "-" +
             pad(now.getDate());
     }
-
-
 
     const serviceModal = $("#serviceModal");
     const serviceForm = $("#serviceForm");
@@ -321,8 +305,6 @@
         });
     }
 
-  
-
     function validImage(input) {
         const file = input.files && input.files[0];
 
@@ -342,8 +324,6 @@
 
         return file;
     }
-
- 
 
     function bindPreview(inputSelector, previewSelector) {
         const input = $(inputSelector);
@@ -380,8 +360,6 @@
         });
     }
 
- 
-
     const phoneInput = $("#businessPhone");
 
     if (phoneInput) {
@@ -405,8 +383,6 @@
         });
     }
 
- 
-
     const zipInput = $("#businessZip");
 
     if (zipInput) {
@@ -419,8 +395,6 @@
         });
     }
 
-  
-
     const stateInput = $("#businessState");
 
     if (stateInput) {
@@ -431,7 +405,6 @@
                 .slice(0, 2);
         });
     }
-
 
     const linkInput = $("#publicBookingLink");
     const copyButton = $("#copyBookingLink");
@@ -492,7 +465,8 @@
                         url: linkInput.value
                     });
                 } catch (error) {
-                    /
+                    
+                }
             } else {
                 await copyLink();
             }
